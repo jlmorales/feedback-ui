@@ -10,9 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const deleteFeedback = (id) => {
-    if (window.confirm("Are you sure you want to delete?")) {
-      setFeedback(feedback.filter((item) => item.id !== id));
-    }
+    setFeedback(feedback.filter((item) => item.id !== id));
   };
 
   const [feedback, setFeedback] = useState(FeedbackData);
