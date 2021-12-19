@@ -1,19 +1,26 @@
 import React from 'react'
 import Card from './shared/Card'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from './shared/Button';
 import RatingSelect from './RatingSelect';
 import { useContext } from "react";
 import FeedbackContext from "../context/FeedbackContext";
 
 function FeedbackForm() {
-
-    const {addFeedBack} = useContext(FeedbackContext);
-
     const [text, setText] = useState('');
     const [rating, setRating] = useState(10);
     const [btnDisabled, setBtnDisabled] = useState(true);
     const [message, setMessage] = useState('');
+    const {addFeedBack, feedbackEdit, updateFeedback} = useContext(FeedbackContext);
+
+    useEffect(() => {
+        if (feedbackEdit.edit === true){
+            setBtnDisabled(false);
+            setText(feedbackEdit.item.text)
+            setRating(feedbackEdit.item.rating)
+        }
+        
+    }, [feedbackEdit])
 
     const handleTextChange = (e) => {
         if (text.length === ''){
@@ -35,7 +42,11 @@ function FeedbackForm() {
             const newFeedback = {
                 text, rating
             }
-            addFeedBack(newFeedback);
+            if (feedbackEdit.edit ===true){
+                updateFeedback(feedbackEdit.item.id, newFeedback)
+            } else {
+                addFeedBack(newFeedback);
+            }
         }
         
 
@@ -46,7 +57,7 @@ function FeedbackForm() {
                 <h2>How would you rate your service?</h2>
                 <RatingSelect select = { (rating) => setRating(rating)}/>
                 <div className="input-group">
-                    <input onChange={handleTextChange} type = "text" placeholder = "Write a review"></input>
+                    <input onChange={handleTextChange} type = "text" placeholder = "Write a review" value={text}></input>
                     <Button type="submit" isDisabled={btnDisabled}>Send</Button>
                 </div>
                 {message && <div className="message">{message}</div>}
